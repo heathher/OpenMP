@@ -5,7 +5,7 @@
 #include <omp.h>
 #define  Max(a,b) ((a)>(b)?(a):(b))
 
-#define  N   (2*2*2*2*2*2*2*2*2)
+#define  N   (2*2*2*2*2*2*2*2*2 *2*2)
 double   maxeps = 0.1e-7;
 int itmax = 100;
 int i,j,k;
@@ -20,12 +20,17 @@ void verify();
 
 
 int main(int argc, char **argv){
+	if (argc < 2) {
+		printf("Bad arguments!\n");
+		return -1;
+	}
+	int num_thr = atoi(argv[1]);
 	double time1 = omp_get_wtime();
 	int it;
 	init();
 	for(it = 1; it <= itmax; it++){
 		eps = 0.;
-		relax();
+		relax(num_thr);
 		//printf( "it=%4i   eps=%f\n", it,eps);
 		if (eps < maxeps) 
 			break;
@@ -48,8 +53,8 @@ void init(){
 } 
 
 
-void relax(){
-	#pragma omp parallel shared(A) 
+void relax(int num_thr){
+	#pragma omp parallel shared(A, num_thr) num_threads(num_thr) reduction(+:eps)
 	{
 		#pragma omp for
 		for(int i = 1; i <= N-2; i++){
@@ -59,9 +64,8 @@ void relax(){
 				double e;
 				e = fabs(b);
 				if (eps < e){
-				#pragma omp critical
 				{
-					eps = e;
+					eps += (eps-e);
 				}				
 				} 
 				A[i][j] = A[i][j] + b;
