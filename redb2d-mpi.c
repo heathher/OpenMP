@@ -16,7 +16,6 @@ int startcol, lastcol, nextrank, prevrank;
 
 int N;
 double **A;
-double **buff;
 double *buf[4];
 
 void range(int n1, int n2, int nprocs, int myrank, int *startrow, int *lastrow);
@@ -64,7 +63,6 @@ int main (int argc, char **argv) {
     stopdiff = eps;
  
     matrixAlloc(&A, N);
-    matrixAlloc(&buff, N);
     init(A, N);
     bufAlloc();
  
