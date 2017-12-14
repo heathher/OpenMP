@@ -65,7 +65,7 @@ void relax(int num_thr){
 				e = fabs(b);
 				if (eps < e){
 				{
-					eps += (eps-e);
+					eps += (e-eps);
 				}				
 				} 
 				A[i][j] = A[i][j] + b;
